@@ -1,0 +1,131 @@
+# Listing of Parameters
+# ---------------------
+subsection Data Parameters
+  # The path to write the data files to
+  set Output path = ./2d_advecting
+
+  # Enable writing of VTU data files
+  set Write VTU   = true
+end
+
+
+subsection Domain Parameters
+  set Input mesh file            = square
+  set Input mesh format          = ucd
+  set Output mesh file           = square_out
+  set Path of domain mesh files  = mesh/
+  # If this is false, then the input mesh file below is ignored and a
+  # hyper-cube is created.
+  set Read domain mesh from file = false
+
+    # Hyper-rectangle:  specify coordinates and n_elements in each direction
+    set Lower Left X = 0.0
+    set Lower Left Y = 0.0
+    set Lower Left Z = 0.0
+
+    set Upper Right X = 1.0
+    set Upper Right Y = 1.0
+    set Upper Right Z = 0.0
+
+    set Cells In X = 100
+    set Cells In Y = 100
+    set Cells In Z = 0
+
+end
+
+
+########################################################
+###                             ###
+###    Time Discretization		###
+###                             ###
+########################################################
+subsection Time Discretization
+
+set Initial time = 0.0
+
+set Final time = 0.005
+##0.20
+##0.25
+
+set Timestep size = 0.001
+
+set Time scheme = RK1
+##SSP_5_4 
+
+end
+
+
+########################################################
+###						###
+###    ADVECTION DG		###
+###						###
+########################################################
+subsection AdvectionDG
+
+set Case name = Advecting Interface
+
+subsection Adaptivity
+set IC refinements = 0
+set Levels = 2
+set Refinement frequency = 0 
+end 
+
+subsection Output
+set Output frequency = 1
+end
+
+end
+
+subsection Vector Space Parameters
+  # Boundary indicator, followed by semicolomn and a list of components to
+  # which this boundary conditions apply. More boundary indicators can be
+  # separated by semicolumn. 1:0,1,4 ; 2,4:0,2
+  set Dirichlet boundary map = 1:0
+
+  # Ordering of the degrees of freedom: none, comp, cuth, upwind.
+  set Dof ordering           = upwind                # default: cuth, comp
+
+  ### The finite element space to use. For vector finite elements use the
+  ### notation FESystem[FE_Q(2)^2-FE_DGP(1)] (e.g. Navier-Stokes).
+  set Finite element space   = FESystem[FE_DGQ(0)]
+
+
+  # Degree of the mapping. If 0 is used, then a Cartesian mapping is assumed.
+  set Mapping degree         = 1
+
+  # Boundary indicators, followed by semicolomn and a list of components to
+  # which this boundary conditions apply. More boundary indicators can be
+  # separated by semicolumn. 1:0,1,4 ; 2,4:0,2
+  set Neumann boundary map   = 2:0
+
+  # Boundary indicator, followed by semicolomn and a list of components to
+  # which this boundary conditions apply. More boundary indicators can be
+  # separated by semicolumn. 1:0,1,4 ; 2,4:0,2
+  set Other boundary map     = 3:0
+
+  # Direction of the wind for upwind ordering of the mesh.
+  set Wind direction         = .01, .01, 1
+
+
+  subsection Grid Parameters
+    set Bottom fraction        = .3
+    # If this number is greater than zero, the mesh is distorted upon
+    # refinement in order to disrupt its structureness.
+    set Distortion coefficient = 0
+    set Global refinement      = 0
+
+    # A number of zero means no limit.
+    set Max number of cells    = 0
+
+    # fixed_number: the Top/Bottom threshold fraction of cells are flagged for
+    # refinement/coarsening. fixed_fraction: the cells whose error is
+    # Top/Bottom fraction of the total are refined/coarsened. optmized: try to
+    # reach optimal error distribution, assuming error is divided by 4 upon
+    # refining. global: refine all cells.
+    set Refinement strategy    = fixed_number
+    set Top fraction           = .3
+  end
+
+end
+
+
